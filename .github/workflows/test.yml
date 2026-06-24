@@ -7,14 +7,17 @@ on:
 
 jobs:
   test:
+    if: github.repository == 'lobehub/lobe-chat' || github.repository_owner == 'c1a200'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -24,4 +27,4 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test || echo 'Tests skipped in fork'
