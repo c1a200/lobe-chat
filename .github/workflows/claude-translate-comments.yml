@@ -20,6 +20,7 @@ jobs:
   translate-comments:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    if: github.repository == 'lobehub/lobe-chat' || (secrets.CLAUDE_CODE_OAUTH_TOKEN != '')
     permissions:
       contents: write
       pull-requests: write
@@ -43,7 +44,7 @@ jobs:
       - name: Run Claude Code for Comment Translation
         uses: anthropics/claude-code-action@v1
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN || github.token }}
           allowed_non_write_users: '*'
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
