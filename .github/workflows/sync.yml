@@ -4,6 +4,7 @@ permissions:
   contents: write
   issues: write
   actions: write
+  pull-requests: write
 
 on:
   schedule:
@@ -14,10 +15,15 @@ jobs:
   sync_latest_from_upstream:
     name: Sync latest commits from upstream repo
     runs-on: ubuntu-latest
-    if: ${{ github.event.repository.fork }}
+    # Only run on forks to avoid conflicts on main repo
+    if: github.repository_owner == 'c1a200' && github.event.repository.fork
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Sync upstream changes
         id: sync
@@ -26,5 +32,15 @@ jobs:
           upstream_sync_repo: lobehub/lobehub
           upstream_sync_branch: main
           target_sync_branch: main
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }} # automatically generated, no need to set
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
           test_mode: false
+
+      - name: Create PR if sync happened
+        if: steps.sync.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: sync latest from upstream'
+          title: 'chore: sync latest from upstream'
+          body: 'Automated sync from upstream lobehub/lobehub main branch.'
+          branch: upstream-sync
