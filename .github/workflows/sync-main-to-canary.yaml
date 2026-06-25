@@ -89,22 +89,23 @@ jobs:
               git commit --no-edit -m "chore: merge main into canary (has conflicts to resolve)"
             fi
             git push origin "$SYNC_BRANCH" -f
-            printf '%s
-' \
-              'Automatic sync from main to canary. Merge conflicts detected.' \
-              '' \
-              '**Resolution steps:**' \
-              '```bash' \
-              'git fetch origin' \
-              "git checkout $SYNC_BRANCH" \
-              'git merge origin/main' \
-              '# Resolve conflicts' \
-              'git add -A && git commit' \
-              'git push' \
-              '```' \
-              '' \
-              '> Do NOT merge canary into a main-based branch — always merge main INTO the canary-based branch to keep a clean commit graph.' \
-              > /tmp/pr-body.md
+            
+            cat << EOF > /tmp/pr-body.md
+Automatic sync from main to canary. Merge conflicts detected.
+
+**Resolution steps:**
+\`\`\`bash
+git fetch origin
+git checkout $SYNC_BRANCH
+git merge origin/main
+# Resolve conflicts
+git add -A && git commit
+git push
+\`\`\`
+
+> Do NOT merge canary into a main-based branch — always merge main INTO the canary-based branch to keep a clean commit graph.
+EOF
+
             gh pr create \
               --base canary \
               --head "$SYNC_BRANCH" \
