@@ -15,7 +15,7 @@ permissions:
   contents: read
 jobs:
   del_runs:
-    if: github.repository == 'lobehub/lobe-chat'
+    if: github.repository == 'lobehub/lobe-chat' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Delete Workflow Runs
