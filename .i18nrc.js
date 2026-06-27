@@ -33,8 +33,7 @@ module.exports = defineConfig({
   },
   markdown: {
     reference:
-      'You need to maintain the component format of the mdx file; the output text does not need to be wrapped in any code block syntax on the outermost layer.
-' +
+      'You need to maintain the component format of the mdx file; the output text does not need to be wrapped in any code block syntax on the outermost layer.\n' +
       fs.readFileSync(path.join(__dirname, 'docs/glossary.mdx'), 'utf8'),
     entry: ['./README.md', './docs/**/*.md', './docs/**/*.mdx'],
     entryLocale: 'en-US',
